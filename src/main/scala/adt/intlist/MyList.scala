@@ -1,10 +1,10 @@
 package adt.mylist
 
-sealed trait IntOption
+sealed trait MyOption[A]
 
-case class IntSome(i: Int) extends IntOption
+case class MySome[A](value: A) extends MyOption[A]
 
-case class IntNone() extends IntOption
+case class MyNone[A]() extends MyOption[A]
 
 sealed trait MyList[A] {
 
@@ -26,9 +26,9 @@ sealed trait MyList[A] {
     case MyListPair(_, tail) => tail.filter(f)
   }
 
-  def find(f: A => Boolean): Option[A] = this match {
-    case MyListNil() => None
-    case MyListPair(head, _) if f(head) => Some(head)
+  def find(f: A => Boolean): MyOption[A] = this match {
+    case MyListNil() => MyNone[A]()
+    case MyListPair(head, _) if f(head) => MySome(head)
     case MyListPair(_, tail) => tail.find(f)
   }
 }
@@ -44,7 +44,6 @@ object Main extends App {
   println(ints + """.contains(1) == """ + ints.contains(1))
   println(ints + """.contains(5) == """ + ints.contains(5))
 
-
   println(ints.exists(n => n == 2))
   println(ints.exists(n => n == 23))
 
@@ -54,7 +53,7 @@ object Main extends App {
   println(ints.filter(_ > 1))
   println(ints.find(_ > 23))
   println(ints.find(_ > 2) match {
-    case None => "None"
-    case Some(n) => n
+    case MyNone() => "None"
+    case MySome(n) => n
   })
 }
