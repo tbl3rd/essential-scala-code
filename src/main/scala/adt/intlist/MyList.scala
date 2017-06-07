@@ -1,10 +1,21 @@
 package adt.mylist
 
-sealed trait MyOption[A]
+sealed trait MyOption[+A] {
+  def map[B](f: A => B): MyOption[B] = this match {
+    case MyNone => MyNone
+    case MySome(value) => MySome(f(value))
+  }
+
+  def flatMap[B](f: A => MyOption[B]): MyOption[B] = this match {
+    case MyNone => MyNone
+    case MySome(value) => f(value)
+  }
+
+}
 
 case class MySome[A](value: A) extends MyOption[A]
 
-case class MyNone[Nothing]() extends MyOption[Nothing]
+case object MyNone extends MyOption[Nothing]
 
 sealed trait MyList[+A] {
 
