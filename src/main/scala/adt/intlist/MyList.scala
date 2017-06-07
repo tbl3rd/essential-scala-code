@@ -14,7 +14,6 @@ sealed trait MyList[A] {
     case MyListPair(_, tail) => tail contains i
   }
 
-
   def exists(f: A => Boolean): Boolean = this match {
     case MyListNil() => false
     case MyListPair(head, tail) => f(head) || tail.exists(f)
