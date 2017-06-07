@@ -30,6 +30,11 @@ sealed trait MyList[A] {
     case MyListPair(head, _) if f(head) => MySome(head)
     case MyListPair(_, tail) => tail.find(f)
   }
+
+  def map[B](f: A => B): MyList[B] = this match {
+    case MyListNil() => MyListNil()
+    case MyListPair(head, tail) => MyListPair(f(head), tail.map(f))
+  }
 }
 
 case class MyListNil[A]() extends MyList[A]
