@@ -13,6 +13,14 @@ object OrderingImplicits {
         else if(x.address > y.address) +1
         else 0
     }
+
+  val personOrdering: Ordering[Person] =
+    new Ordering[Person] {
+      def compare(x: Person, y: Person): Int =
+        if (x.name < y.name) -1
+        else if (x.name > y.name) +1
+        else emailOrdering.compare(x.email, y.email)
+    }
 }
 
 object Main extends App {
@@ -26,10 +34,12 @@ object Main extends App {
   val person1 = Person("Alice",   Email("alice@cool.com"))
   val person2 = Person("Charlie", Email("charlie@excellent.com"))
   val person3 = Person("Bob",     Email("bob@awesome.com"))
+  val person4 = Person("Bob",     Email("bob@notasawesome.com"))
   val people = List(person1, person2, person3)
 
   println("""emailOrdering.compare(email1, email2)    == """ + emailOrdering.compare(email1, email2))
-  // println("""personOrdering.compare(person1, person2) == """ + personOrdering.compare(person1, person2))
+  println("""personOrdering.compare(person1, person2) == """ + personOrdering.compare(person1, person2))
+  println("""personOrdering.compare(person3, person4) == """ + personOrdering.compare(person3, person4))
 
   // println("""emails.sorted == """ + emails.sorted)
   // println("""people.sorted == """ + people.sorted)
