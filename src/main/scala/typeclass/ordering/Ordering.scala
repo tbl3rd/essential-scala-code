@@ -13,6 +13,14 @@ object OrderingImplicits {
         else if(x.address > y.address) +1
         else 0
     }
+
+  val personOrdering: Ordering[Person] =
+    new Ordering[Person] {
+      def compare(x: Person, y: Person): Int =
+        if (x.name < y.name) -1
+        else if (x.name > y.name) +1
+        else emailOrdering.compare(x.email, y.email)
+    }
 }
 
 object Main extends App {
