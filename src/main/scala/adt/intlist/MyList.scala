@@ -51,7 +51,19 @@ sealed trait MyList[+A] {
       x.append(y)
   }
 
+  def foldLeft[B](empty: B)(func: (B, A) => B): B = this match {
+    case MyListNil => empty
+    case MyListPair(head, tail) =>
+      tail.foldLeft(func(empty, head))(func)
+  }
+
+  def foldRight[B](empty: B)(func: (A, B) => B): B = this match {
+    case MyListNil => empty
+    case MyListPair(head, tail) =>
+      func(head, tail.foldRight(empty)(func))
+  }
 }
+
 
 case object MyListNil extends MyList[Nothing]
 
@@ -80,4 +92,8 @@ object Main extends App {
 
   println(ints + 1.toString)
   println(ints + ".flatMap(List(_.toDouble)) ==" + ints.flatMap(x => MyListPair(x.toDouble, MyListNil)))
+
+  println(ints + ".foldLeft(MyListNil)(_) ==" + ints.foldLeft[MyList[Int]](MyListNil)((newList, item) => MyListPair(item, newList)))
+  println(ints + ".foldRight(MyListNil)(_) ==" + ints.foldRight[MyList[Int]](MyListNil)((item, newList) => MyListPair(item, newList)))
+
 }
