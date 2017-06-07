@@ -35,6 +35,16 @@ sealed trait MyList[A] {
     case MyListNil() => MyListNil()
     case MyListPair(head, tail) => MyListPair(f(head), tail.map(f))
   }
+
+  def append(that: MyList[A]): MyList[A] = this match {
+    case MyListNil() => that
+    case MyListPair(head, tail) => MyListPair(head, tail.append(that))
+  }
+
+  def flatMap[B](f: A => MyList[B]): MyList[B] = this match {
+    case MyListNil() => MyListNil()
+    case MyListPair(head, tail) => f(head).append(tail.flatMap(f))
+  }
 }
 
 case class MyListNil[A]() extends MyList[A]
@@ -60,4 +70,12 @@ object Main extends App {
     case MyNone() => "None"
     case MySome(n) => n
   })
+
+  val charsOf: String => MyList[Char] = (s: String) => s match {
+    case "" => MyListNil[Char]()
+    case _ => MyListPair(s.charAt(0), charsOf(s.substring(1)))
+  }
+
+  val words = MyListPair[String]("a", MyListPair("few", MyListPair("words", MyListNil())))
+  println(words.flatMap(charsOf))
 }
